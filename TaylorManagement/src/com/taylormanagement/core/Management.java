@@ -23,7 +23,6 @@ import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.CompilationMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
-import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
@@ -38,15 +37,12 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import com.sun.management.OperatingSystemMXBean;
+import com.taylormanagement.entity.OperatingSystemMbeanEntity;
+
+
 public abstract class Management {
-	
-	public static final String CLASSLOADING_CLASS_NAME = "java.lang:type=ClassLoading";
-	public static final String COMPILATION_CLASS_NAME = "java.lang:type=Compilation";
-	public static final String MEMORY_CLASS_NAME = "java.lang:type=Memory";
-	public static final String OPERATING_SYSTEM_CLASS_NAME = "java.lang:type=OperatingSystem";
-	public static final String RUNTIME_CLASS_NAME = "java.lang:type=Runtime";
-	public static final String THREADING_CLASS_NAME = "java.lang:type=Threading";
-	
+		
 	private static final String PROTOCOL_NAME = "service:jmx:rmi:///jndi/rmi://";
 	private static final String REMOTE_CREDENTIALS_KEY = "jmx.remote.credentials";
 		
@@ -54,6 +50,8 @@ public abstract class Management {
 	protected JMXServiceURL jmxServiceURL;
 	protected JMXConnector connector;
 	protected MBeanServerConnection connection;
+	
+	public abstract String getJson() throws IOException;
 	
 	public Management(String host, int port) throws IOException {
 		connect(host, port, null);
@@ -115,7 +113,7 @@ public abstract class Management {
 	}
 
 	public OperatingSystemMXBean getOperatingSystem() throws IOException {
-		ObjectName objectName = objectMap.get(OPERATING_SYSTEM_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
 		
 		OperatingSystemMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(
 				connection, objectName.toString(), OperatingSystemMXBean.class);
@@ -123,7 +121,7 @@ public abstract class Management {
 	}
 
 	public MemoryMXBean getMemoryMbean() throws IOException {
-		ObjectName objectName = objectMap.get(MEMORY_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.MEMORY_MXBEAN_NAME);
 		
 		MemoryMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
 				MemoryMXBean.class);
@@ -131,14 +129,14 @@ public abstract class Management {
 	}
 
 	public RuntimeMXBean getRuntimeMbean() throws IOException {
-		ObjectName objectName = objectMap.get(RUNTIME_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.RUNTIME_MXBEAN_NAME);
 				
 		RuntimeMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(), RuntimeMXBean.class);
 		return mbean;
 	}
 
 	public ThreadMXBean getThreadingMbean() throws IOException {
-		ObjectName objectName = objectMap.get(THREADING_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.THREAD_MXBEAN_NAME);
 		
 		ThreadMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
 				ThreadMXBean.class);
@@ -146,7 +144,7 @@ public abstract class Management {
 	}
 
 	public CompilationMXBean getCompilationMbean() throws IOException {
-		ObjectName objectName = objectMap.get(COMPILATION_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.COMPILATION_MXBEAN_NAME);
 		
 		CompilationMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
 				CompilationMXBean.class);
@@ -154,11 +152,12 @@ public abstract class Management {
 	}
 
 	public ClassLoadingMXBean getClassLoadingMBean() throws IOException {
-		ObjectName objectName = objectMap.get(CLASSLOADING_CLASS_NAME);
+		ObjectName objectName = objectMap.get(ManagementFactory.CLASS_LOADING_MXBEAN_NAME);
 
 		ClassLoadingMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(
 				connection, objectName.getCanonicalName(),
 				ClassLoadingMXBean.class);
+		
 		return mbean;
 	}
 

@@ -22,11 +22,15 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryManagerMXBean;
 import java.lang.management.MemoryPoolMXBean;
+import java.util.HashMap;
 
 import javax.management.ObjectName;
 
+import com.google.gson.Gson;
 import com.sun.management.GarbageCollectorMXBean;
 import com.taylormanagement.core.Management;
+import com.taylormanagement.entity.MemoryMbeanEntity;
+import com.taylormanagement.entity.OperatingSystemMbeanEntity;
 
 public class TomcatManagement extends Management {
 
@@ -124,12 +128,55 @@ public class TomcatManagement extends Management {
 
 	public MemoryPoolMXBean getMemoryPoolSurvivorSpaceMbean() throws IOException {
 		ObjectName objectName = objectMap.get(MEMORYPOOL_SURVIVOR_SPACE_CALSS_NAME);
-		
+
 		return getMemoryPoolMXBean(objectName);
 	}
+	
+	private MemoryMbeanEntity getMemoryEntity() throws IOException {
+		MemoryMbeanEntity entity = new MemoryMbeanEntity();
+		
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("committed", getMemoryMbean().getHeapMemoryUsage()
+				.getCommitted());
+		map.put("init", getMemoryMbean().getHeapMemoryUsage().getInit());
+		map.put("used", getMemoryMbean().getHeapMemoryUsage().getUsed());
+		map.put("max", getMemoryMbean().getHeapMemoryUsage().getMax());
+		entity.setHeapMemoryUsage(map);
 
+		// NonHeapMemoryUsage
+		map = new HashMap<String, Object>();
+		map.put("committed", getMemoryMbean().getNonHeapMemoryUsage()
+				.getCommitted());
+		map.put("init", getMemoryMbean().getNonHeapMemoryUsage().getInit());
+		map.put("used", getMemoryMbean().getNonHeapMemoryUsage().getUsed());
+		map.put("max", getMemoryMbean().getNonHeapMemoryUsage().getMax());
+		entity.setNonHeapMemoryUsage(map);
 
+		// ObjectPendingFinalizationCount
+		entity.setObjectPendingFinalizationCount(getMemoryMbean()
+				.getObjectPendingFinalizationCount());
 
+		// Verbose
+		entity.setVerbose(getMemoryMbean().isVerbose());
+		
+		return entity;
+	}
+	
+	private OperatingSystemMbeanEntity getOperatingSystemEntity() throws IOException {
+		OperatingSystemMbeanEntity entity = new OperatingSystemMbeanEntity(getOperatingSystem());
+		
+		return entity;
+	}
+
+	@Override
+	public String getJson() throws IOException {
+		Gson gson = new Gson();
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		data.put("memory", getMemoryEntity());
+		data.put("operatingSystem", getOperatingSystemEntity());
+		
+		return gson.toJson(data);
+	}
 
 	
 }
