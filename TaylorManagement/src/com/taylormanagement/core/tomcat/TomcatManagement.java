@@ -1,5 +1,5 @@
 /* 
-     Java Was Management JMX Library
+     Java Was Management JMX Library (NoahJMX)
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -23,14 +23,14 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryManagerMXBean;
 import java.lang.management.MemoryPoolMXBean;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.ObjectName;
 
-import com.google.gson.Gson;
 import com.sun.management.GarbageCollectorMXBean;
 import com.taylormanagement.core.Management;
-import com.taylormanagement.entity.MemoryMbeanEntity;
-import com.taylormanagement.entity.OperatingSystemMbeanEntity;
+import com.taylormanagement.mbean.MemoryMbean;
+import com.taylormanagement.mbean.OperatingSystemMbean;
 
 public class TomcatManagement extends Management {
 
@@ -132,51 +132,22 @@ public class TomcatManagement extends Management {
 		return getMemoryPoolMXBean(objectName);
 	}
 	
-	private MemoryMbeanEntity getMemoryEntity() throws IOException {
-		MemoryMbeanEntity entity = new MemoryMbeanEntity();
-		
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("committed", getMemoryMbean().getHeapMemoryUsage()
-				.getCommitted());
-		map.put("init", getMemoryMbean().getHeapMemoryUsage().getInit());
-		map.put("used", getMemoryMbean().getHeapMemoryUsage().getUsed());
-		map.put("max", getMemoryMbean().getHeapMemoryUsage().getMax());
-		entity.setHeapMemoryUsage(map);
-
-		// NonHeapMemoryUsage
-		map = new HashMap<String, Object>();
-		map.put("committed", getMemoryMbean().getNonHeapMemoryUsage()
-				.getCommitted());
-		map.put("init", getMemoryMbean().getNonHeapMemoryUsage().getInit());
-		map.put("used", getMemoryMbean().getNonHeapMemoryUsage().getUsed());
-		map.put("max", getMemoryMbean().getNonHeapMemoryUsage().getMax());
-		entity.setNonHeapMemoryUsage(map);
-
-		// ObjectPendingFinalizationCount
-		entity.setObjectPendingFinalizationCount(getMemoryMbean()
-				.getObjectPendingFinalizationCount());
-
-		// Verbose
-		entity.setVerbose(getMemoryMbean().isVerbose());
-		
-		return entity;
+	private MemoryMbean getMemoryMbean() throws IOException {
+		MemoryMbean mbean = new MemoryMbean(getMemoryMXBean());				
+		return mbean;
 	}
 	
-	private OperatingSystemMbeanEntity getOperatingSystemEntity() throws IOException {
-		OperatingSystemMbeanEntity entity = new OperatingSystemMbeanEntity(getOperatingSystem());
-		
+	private OperatingSystemMbean getOperatingSystemMBean() throws IOException {
+		OperatingSystemMbean entity = new OperatingSystemMbean(getOperatingSystemMXBean());
 		return entity;
 	}
 
 	@Override
-	public String getJson() throws IOException {
-		Gson gson = new Gson();
-		HashMap<String, Object> data = new HashMap<String, Object>();
-		data.put("memory", getMemoryEntity());
-		data.put("operatingSystem", getOperatingSystemEntity());
-		
-		return gson.toJson(data);
+	public Map<String, Object> getManagementMap() throws IOException {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("memory", getMemoryMbean());
+		map.put("operatingSystem", getOperatingSystemMBean());
+		return map;
 	}
-
 	
 }

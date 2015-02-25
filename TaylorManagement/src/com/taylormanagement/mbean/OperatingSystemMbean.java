@@ -1,5 +1,5 @@
 /* 
-     Java Was Management JMX Library
+     Java Was Management JMX Library (NoahJMX)
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -16,12 +16,12 @@
      You should have received a copy of the GNU Affero General Public License 
      along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 */ 
-package com.taylormanagement.entity;
+package com.taylormanagement.mbean;
 
 import com.sun.management.OperatingSystemMXBean;
 
 
-public final class OperatingSystemMbeanEntity implements OperatingSystemMXBean {
+public final class OperatingSystemMbean {
 	
 	private long committedVirtualMemorySize;
 	private long freePhysicalMemorySize;
@@ -35,18 +35,18 @@ public final class OperatingSystemMbeanEntity implements OperatingSystemMXBean {
 	private String arch;
 	private double systemLoadAverage;
 	
-	public OperatingSystemMbeanEntity(OperatingSystemMXBean mbean) {
-		arch = mbean.getArch();
-		availableProcessors = mbean.getAvailableProcessors();
-		committedVirtualMemorySize = mbean.getCommittedVirtualMemorySize();
-		freePhysicalMemorySize = mbean.getFreePhysicalMemorySize();
-		freeSwapSpaceSize = mbean.getFreeSwapSpaceSize();
-		name = mbean.getName();
-		processCpuTime = mbean.getProcessCpuTime();
-		systemLoadAverage = mbean.getSystemLoadAverage();
-		totalPhysicalMemorySize = mbean.getTotalPhysicalMemorySize();
-		totalSwapSpaceSize = mbean.getTotalSwapSpaceSize();
-		version = mbean.getVersion();
+	public OperatingSystemMbean(OperatingSystemMXBean mxBean) {
+		arch = mxBean.getArch();
+		availableProcessors = mxBean.getAvailableProcessors();
+		committedVirtualMemorySize = mxBean.getCommittedVirtualMemorySize();
+		freePhysicalMemorySize = mxBean.getFreePhysicalMemorySize();
+		freeSwapSpaceSize = mxBean.getFreeSwapSpaceSize();
+		name = mxBean.getName();
+		processCpuTime = mxBean.getProcessCpuTime();
+		systemLoadAverage = mxBean.getSystemLoadAverage();
+		totalPhysicalMemorySize = mxBean.getTotalPhysicalMemorySize();
+		totalSwapSpaceSize = mxBean.getTotalSwapSpaceSize();
+		version = mxBean.getVersion();
 	}
 
 	public long getCommittedVirtualMemorySize() {

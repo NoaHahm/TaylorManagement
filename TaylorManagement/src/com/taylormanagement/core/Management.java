@@ -1,5 +1,5 @@
 /* 
-     Java Was Management JMX Library
+     Java Was Management JMX Library (NoahJMX)
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -38,7 +38,6 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import com.sun.management.OperatingSystemMXBean;
-import com.taylormanagement.entity.OperatingSystemMbeanEntity;
 
 
 public abstract class Management {
@@ -51,7 +50,7 @@ public abstract class Management {
 	protected JMXConnector connector;
 	protected MBeanServerConnection connection;
 	
-	public abstract String getJson() throws IOException;
+	public abstract Map<String, Object> getManagementMap() throws IOException;
 	
 	public Management(String host, int port) throws IOException {
 		connect(host, port, null);
@@ -112,7 +111,7 @@ public abstract class Management {
 		
 	}
 
-	public OperatingSystemMXBean getOperatingSystem() throws IOException {
+	public OperatingSystemMXBean getOperatingSystemMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
 		
 		OperatingSystemMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(
@@ -120,7 +119,7 @@ public abstract class Management {
 		return mbean;
 	}
 
-	public MemoryMXBean getMemoryMbean() throws IOException {
+	public MemoryMXBean getMemoryMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.MEMORY_MXBEAN_NAME);
 		
 		MemoryMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
@@ -128,14 +127,14 @@ public abstract class Management {
 		return mbean;
 	}
 
-	public RuntimeMXBean getRuntimeMbean() throws IOException {
+	public RuntimeMXBean getRuntimeMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.RUNTIME_MXBEAN_NAME);
 				
 		RuntimeMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(), RuntimeMXBean.class);
 		return mbean;
 	}
 
-	public ThreadMXBean getThreadingMbean() throws IOException {
+	public ThreadMXBean getThreadingMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.THREAD_MXBEAN_NAME);
 		
 		ThreadMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
@@ -143,7 +142,7 @@ public abstract class Management {
 		return mbean;
 	}
 
-	public CompilationMXBean getCompilationMbean() throws IOException {
+	public CompilationMXBean getCompilationMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.COMPILATION_MXBEAN_NAME);
 		
 		CompilationMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(connection, objectName.getCanonicalName(),
@@ -151,7 +150,7 @@ public abstract class Management {
 		return mbean;
 	}
 
-	public ClassLoadingMXBean getClassLoadingMBean() throws IOException {
+	public ClassLoadingMXBean getClassLoadingMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.CLASS_LOADING_MXBEAN_NAME);
 
 		ClassLoadingMXBean mbean = ManagementFactory.newPlatformMXBeanProxy(
