@@ -1,5 +1,6 @@
 /* 
-     Java Was Management JMX Library (NoahJMX)
+     Java Was Management JMX Library (TaylorManagement)
+     
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -15,7 +16,7 @@
      
      You should have received a copy of the GNU Affero General Public License 
      along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-*/ 
+*/  
 package com.taylormanagement.core;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import com.sun.management.OperatingSystemMXBean;
+import com.taylormanagement.responce.ManagementInfo;
 
 
 public abstract class Management {
@@ -50,7 +52,7 @@ public abstract class Management {
 	protected JMXConnector connector;
 	protected MBeanServerConnection connection;
 	
-	public abstract Map<String, Object> getManagementMap() throws IOException;
+	
 	
 	public Management(String host, int port) throws IOException {
 		connect(host, port, null);
@@ -67,8 +69,17 @@ public abstract class Management {
 
         connect(host, port, environment);
 	}
+
 	
-	public void connect(String host, int port, Map<String, ?> environment) throws IOException {		
+	/**
+	 * Java Remote Web ApplicationServer Connect  
+	 * 
+	 * @param host
+	 * @param port
+	 * @param environment
+	 * @throws IOException
+	 */
+	private void connect(String host, int port, Map<String, ?> environment) throws IOException {		
 		objectMap = new HashMap<String, ObjectName>();
 		jmxServiceURL = new JMXServiceURL(hostBulid(host, port));
 		connector = JMXConnectorFactory.connect(jmxServiceURL, environment);
@@ -76,30 +87,13 @@ public abstract class Management {
 
 		initialized();
 	}
+
 	
-
-	public static String hostBulid(String host, int port) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(PROTOCOL_NAME);
-		sb.append(host);
-		sb.append(":");
-		sb.append(port);
-		sb.append("/jmxrmi");
-		return sb.toString();
-	}
-
-	public void reConnect() throws IOException {
-		connector = JMXConnectorFactory.connect(jmxServiceURL);
-		connection = connector.getMBeanServerConnection();
-	}
-
-	public boolean isConnect() throws IOException {
-		if (connector.getConnectionId() == null)
-			return false;
-
-		return true;
-	}
-	
+	/**
+	 * MBean get objectName
+	 * 
+	 * @throws IOException
+	 */
 	private void initialized() throws IOException {
 
 		Set<ObjectInstance> instances = connection.queryMBeans(null, null);
@@ -110,7 +104,49 @@ public abstract class Management {
 		}
 		
 	}
+	
+	/**
+	 * 
+	 * @param host
+	 * @param port
+	 * @return
+	 */
+	public static String hostBulid(String host, int port) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(PROTOCOL_NAME);
+		sb.append(host);
+		sb.append(":");
+		sb.append(port);
+		sb.append("/jmxrmi");
+		return sb.toString();
+	}
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
+	public void reConnect() throws IOException {
+		connector = JMXConnectorFactory.connect(jmxServiceURL);
+		connection = connector.getMBeanServerConnection();
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean isConnect() throws IOException {
+		if (connector.getConnectionId() == null)
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public OperatingSystemMXBean getOperatingSystemMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);
 		
@@ -119,6 +155,11 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public MemoryMXBean getMemoryMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.MEMORY_MXBEAN_NAME);
 		
@@ -127,6 +168,11 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public RuntimeMXBean getRuntimeMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.RUNTIME_MXBEAN_NAME);
 				
@@ -134,6 +180,11 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public ThreadMXBean getThreadingMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.THREAD_MXBEAN_NAME);
 		
@@ -142,6 +193,11 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public CompilationMXBean getCompilationMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.COMPILATION_MXBEAN_NAME);
 		
@@ -150,6 +206,11 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public ClassLoadingMXBean getClassLoadingMXBean() throws IOException {
 		ObjectName objectName = objectMap.get(ManagementFactory.CLASS_LOADING_MXBEAN_NAME);
 
@@ -160,4 +221,10 @@ public abstract class Management {
 		return mbean;
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public abstract ManagementInfo getManagementInfo() throws IOException;
 }

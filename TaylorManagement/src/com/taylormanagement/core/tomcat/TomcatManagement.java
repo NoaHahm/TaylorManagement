@@ -1,5 +1,6 @@
 /* 
-     Java Was Management JMX Library (NoahJMX)
+     Java Was Management JMX Library (TaylorManagement)
+     
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -22,8 +23,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryManagerMXBean;
 import java.lang.management.MemoryPoolMXBean;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.management.ObjectName;
 
@@ -31,6 +30,8 @@ import com.sun.management.GarbageCollectorMXBean;
 import com.taylormanagement.core.Management;
 import com.taylormanagement.mbean.MemoryMbean;
 import com.taylormanagement.mbean.OperatingSystemMbean;
+import com.taylormanagement.mbean.RuntimeMbean;
+import com.taylormanagement.responce.ManagementInfo;
 
 public class TomcatManagement extends Management {
 
@@ -43,17 +44,40 @@ public class TomcatManagement extends Management {
 	public final static String MEMORYPOOL_OLD_GEN_CALSS_NAME = "java.lang:type=MemoryPool,name=PS Old Gen";
 	public final static String MEMORYPOOL_PERM_GEN_CALSS_NAME = "java.lang:type=MemoryPool,name=PS Perm Gen";
 	public final static String MEMORYPOOL_SURVIVOR_SPACE_CALSS_NAME = "java.lang:type=MemoryPool,name=PS Survivor Space";
-		
 	
+	
+	/**
+	 * Java Remote Web ApplicationServer Connect (Non Secure Mode)
+	 * 
+	 * @param host
+	 * @param port
+	 * @throws IOException
+	 */
 	public TomcatManagement(String host, int port) throws IOException {
 		super(host, port);
 	}
 	
+	/**
+	 * Java Remote Web ApplicationServer Connect (Secure Mode)
+	 * 
+	 * @param host
+	 * @param port
+	 * @param id
+	 * @param password
+	 * @throws IOException
+	 */
 	public TomcatManagement(String host, int port, String id, String password)
 			throws IOException {
 		super(host, port, id, password);
 	}
 
+	/**
+	 * Get MBean (GarbageCollector)
+	 * 
+	 * @param objectName
+	 * @throws IOException
+	 * @return GarbageCollectorMXBean (Interface)
+	 */
 	private GarbageCollectorMXBean getGarbageCollectorMXBean(ObjectName objectName) throws IOException {
 		GarbageCollectorMXBean mbean = ManagementFactory
 				.newPlatformMXBeanProxy(connection,
@@ -62,12 +86,24 @@ public class TomcatManagement extends Management {
 		return mbean;
 	}
 	
+	/**
+	 * Get MBean (GarbageMarkSweep)
+	 * 
+	 * @throws IOException
+	 * @return
+	 */
 	public GarbageCollectorMXBean getGarbageMarkSweepMbean() throws IOException {
 		ObjectName objectName = objectMap.get(GARBAGE_PS_MARKSWEEP_CALSS_NAME);
 
 		return getGarbageCollectorMXBean(objectName);
 	}
 
+	/**
+	 * Get MBean (GarbageScavenge)
+	 * 
+	 * @throws IOException
+	 * @return
+	 */
 	public GarbageCollectorMXBean getGarbageScavengeMbean() throws IOException {
 		ObjectName objectName = objectMap.get(GARBAGE_PS_SCAVENGE_CALSS_NAME);
 		
@@ -122,32 +158,56 @@ public class TomcatManagement extends Management {
 
 	public MemoryPoolMXBean getMemoryPoolPermGenMbean() throws IOException {
 		ObjectName objectName = objectMap.get(MEMORYPOOL_PERM_GEN_CALSS_NAME);
-		
+
 		return getMemoryPoolMXBean(objectName);
 	}
 
 	public MemoryPoolMXBean getMemoryPoolSurvivorSpaceMbean() throws IOException {
 		ObjectName objectName = objectMap.get(MEMORYPOOL_SURVIVOR_SPACE_CALSS_NAME);
-
+		
 		return getMemoryPoolMXBean(objectName);
 	}
 	
-	private MemoryMbean getMemoryMbean() throws IOException {
+	public MemoryMbean getMemoryMbean() throws IOException {
 		MemoryMbean mbean = new MemoryMbean(getMemoryMXBean());				
+		
 		return mbean;
 	}
 	
-	private OperatingSystemMbean getOperatingSystemMBean() throws IOException {
-		OperatingSystemMbean entity = new OperatingSystemMbean(getOperatingSystemMXBean());
-		return entity;
-	}
-
-	@Override
-	public Map<String, Object> getManagementMap() throws IOException {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("memory", getMemoryMbean());
-		map.put("operatingSystem", getOperatingSystemMBean());
-		return map;
+	public OperatingSystemMbean getOperatingSystemMBean() throws IOException {
+		OperatingSystemMbean mbean = new OperatingSystemMbean(getOperatingSystemMXBean());
+		
+		return mbean;
 	}
 	
+	public RuntimeMbean getRuntimeMBean() throws IOException {
+		RuntimeMbean mbean = new RuntimeMbean(getRuntimeMXBean());
+		return mbean;
+	}
+	
+	public Integer getProcessId() {
+		String[] names = null;
+		Integer result = null;
+		try {
+			String runtimeName = getRuntimeMXBean().getName();
+			if (runtimeName.indexOf("@") != -1) {
+				names = runtimeName.split("@");
+			}
+			result = names[0] != null ? Integer.parseInt(names[0]) : null;
+		} catch (IOException e) {
+			return null;
+		} catch (NumberFormatException e) {
+			return null;		
+		}
+		return result;
+	}
+	
+	@Override
+	public ManagementInfo getManagementInfo() throws IOException {
+		ManagementInfo info = new ManagementInfo();
+		info.setMemory(getMemoryMbean());
+		info.setOperatingSystem(getOperatingSystemMBean());
+		info.setRuntime(getRuntimeMBean());
+		return info;
+	}
 }

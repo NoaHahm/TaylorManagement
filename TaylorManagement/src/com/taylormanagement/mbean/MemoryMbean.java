@@ -1,5 +1,6 @@
 /* 
-     Java Was Management JMX Library (NoahJMX)
+     Java Was Management JMX Library (TaylorManagement)
+     
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
@@ -19,6 +20,7 @@
 package com.taylormanagement.mbean;
 
 import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 
 public final class MemoryMbean {
 
@@ -29,18 +31,18 @@ public final class MemoryMbean {
 
 	public MemoryMbean(MemoryMXBean mxBean) {
 		//Heap
-		heapMemoryUsage = new MemoryUsage();
-		heapMemoryUsage.setCommitted(mxBean.getHeapMemoryUsage().getCommitted());
-		heapMemoryUsage.setInit(mxBean.getHeapMemoryUsage().getInit());
-		heapMemoryUsage.setUsed(mxBean.getHeapMemoryUsage().getUsed());
-		heapMemoryUsage.setMax(mxBean.getHeapMemoryUsage().getMax());
+		long committed = mxBean.getHeapMemoryUsage().getCommitted();
+		long init = mxBean.getHeapMemoryUsage().getInit();
+		long used = mxBean.getHeapMemoryUsage().getUsed();
+		long max = mxBean.getHeapMemoryUsage().getMax();		
+		heapMemoryUsage = new MemoryUsage(init, used, committed, max);		
 		
 		//NonHeap
-		nonHeapMemoryUsage = new MemoryUsage();
-		nonHeapMemoryUsage.setCommitted(mxBean.getNonHeapMemoryUsage().getCommitted());
-		nonHeapMemoryUsage.setInit(mxBean.getNonHeapMemoryUsage().getInit());
-		nonHeapMemoryUsage.setUsed(mxBean.getNonHeapMemoryUsage().getUsed());
-		nonHeapMemoryUsage.setMax(mxBean.getNonHeapMemoryUsage().getMax());	
+		committed = mxBean.getHeapMemoryUsage().getCommitted();
+		init = mxBean.getHeapMemoryUsage().getInit();
+		used = mxBean.getHeapMemoryUsage().getUsed();
+		max = mxBean.getHeapMemoryUsage().getMax();		
+		nonHeapMemoryUsage = new MemoryUsage(init, used, committed, max);	
 		
 		//ObjectPendingFinalizationCount
 		objectPendingFinalizationCount = mxBean.getObjectPendingFinalizationCount();

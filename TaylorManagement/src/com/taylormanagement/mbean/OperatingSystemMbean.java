@@ -1,5 +1,6 @@
 /* 
-     Java Was Management JMX Library (NoahJMX)
+     Java Was Management JMX Library (TaylorManagement)
+     
      Copyright (c) 2015 Noah Hahm <dbgtdbz2@naver.com> 
      http://globalbiz.tistory.com
  
