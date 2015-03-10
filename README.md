@@ -1,6 +1,8 @@
 # TaylorManagement
 Was Management JMX Library
+
 WAS 원격 서버를 통해 시스템 및 JVM 에 대한 정보를 획득 할 수 있습니다.
+
 직관적인 인터페이스를 제공하므로, 누구나 쉽게 사용 할 수 있습니다.
 
 사용방법
