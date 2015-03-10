@@ -7,13 +7,15 @@ WAS 원격 서버를 통해 시스템 및 JVM 에 대한 정보를 획득 할 수 있습니다.
 ---------
 WAS 구동시 반드시 JVM옵션에 아래 옵션을 추가 할 것 (No Secure Mode 방식)
 
+```
 -Dcom.sun.management.jmxremote
-
 -Dcom.sun.management.jmxremote.port=<port>
-
 -Dcom.sun.management.jmxremote.authenticate=false
-
 -Dcom.sun.management.jmxremote.ssl=false
+```
+
+예제
+---------
 
 ```
 try {
