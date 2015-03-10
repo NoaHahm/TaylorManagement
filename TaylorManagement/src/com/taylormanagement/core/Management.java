@@ -39,7 +39,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import com.sun.management.OperatingSystemMXBean;
-import com.taylormanagement.responce.ManagementInfo;
+import com.taylormanagement.data.ManagementInfo;
 
 
 public abstract class Management {

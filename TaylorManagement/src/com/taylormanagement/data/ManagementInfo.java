@@ -1,4 +1,6 @@
-package com.taylormanagement.responce;
+package com.taylormanagement.data;
+
+import java.util.Date;
 
 import com.taylormanagement.mbean.MemoryMbean;
 import com.taylormanagement.mbean.OperatingSystemMbean;
@@ -8,6 +10,7 @@ public final class ManagementInfo {
 	private MemoryMbean memory;
 	private OperatingSystemMbean operatingSystem;
 	private RuntimeMbean runtime;
+	private Date currentDate;
 
 	public MemoryMbean getMemory() {
 		return memory;
@@ -31,6 +34,14 @@ public final class ManagementInfo {
 
 	public void setRuntime(RuntimeMbean runtime) {
 		this.runtime = runtime;
+	}
+
+	public Date getCurrentDate() {
+		return currentDate;
+	}
+
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
 	}
 
 }

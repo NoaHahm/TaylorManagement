@@ -23,15 +23,16 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryManagerMXBean;
 import java.lang.management.MemoryPoolMXBean;
+import java.util.Date;
 
 import javax.management.ObjectName;
 
 import com.sun.management.GarbageCollectorMXBean;
 import com.taylormanagement.core.Management;
+import com.taylormanagement.data.ManagementInfo;
 import com.taylormanagement.mbean.MemoryMbean;
 import com.taylormanagement.mbean.OperatingSystemMbean;
 import com.taylormanagement.mbean.RuntimeMbean;
-import com.taylormanagement.responce.ManagementInfo;
 
 public class TomcatManagement extends Management {
 
@@ -208,6 +209,7 @@ public class TomcatManagement extends Management {
 		info.setMemory(getMemoryMbean());
 		info.setOperatingSystem(getOperatingSystemMBean());
 		info.setRuntime(getRuntimeMBean());
+		info.setCurrentDate(new Date(System.currentTimeMillis()));
 		return info;
 	}
 }
